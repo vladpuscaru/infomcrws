@@ -3,18 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MyGrid : MonoBehaviour
 {   
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
     public float nodeRadius;
-    Node[,] grid;
+    public Node[,] grid;
 
-    float nodeDiameter;
-    int gridSizeX, gridSizeY;
+    public float nodeDiameter;
+    public int gridSizeX, gridSizeY;
 
-    public TextMeshProUGUI text;
+    public AlgorithmType activeAlg;
+    public List<Node> open;
+    public List<Node> closed;
+    public List<Node> path;
 
     void Start() {
         nodeDiameter = nodeRadius*2;
@@ -24,38 +28,8 @@ public class MyGrid : MonoBehaviour
     }
 
     void Update() {
-        if (text) {
-            text.text = "Total Cells: " + gridSizeX * gridSizeY; 
-        }
-
         if (gridWorldSize.x * gridWorldSize.y != grid.LongLength) {
             CreateGrid();
-        }
-    }
-
-
-    public List<Node> open;
-    public HashSet<Node> closed;
-    public List<Node> path;
-    void OnDrawGizmos() {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
-
-        if (grid != null) {
-            foreach (Node n in grid) {
-                Gizmos.color = n.walkable ? Color.white : Color.red;
-                if (path != null) {
-                    if (open.Contains(n)) {
-                        Gizmos.color = Color.cyan;
-                    }
-                    if (closed.Contains(n)) {
-                        Gizmos.color = Color.blue;
-                    }
-                    if (path.Contains(n)) {
-                        Gizmos.color = Color.black;
-                    }
-                }
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
-            }
         }
     }
 

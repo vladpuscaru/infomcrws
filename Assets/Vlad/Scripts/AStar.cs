@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AStar : MonoBehaviour
@@ -14,7 +15,7 @@ public class AStar : MonoBehaviour
     }
 
     void Update() {
-        if (seeker && target) {
+        if (grid.activeAlg == AlgorithmType.ASTAR && seeker && target) {
             FindPath(seeker.position, target.position);
         }
     }
@@ -43,7 +44,9 @@ public class AStar : MonoBehaviour
             closed.Add(currentNode);
 
             if (currentNode == targetNode) {
-                RetracePath(startNode, targetNode, open, closed);
+                grid.open = open;
+                grid.closed = closed.ToList();
+                RetracePath(startNode, targetNode);
                 return;
             }
 
@@ -67,7 +70,7 @@ public class AStar : MonoBehaviour
         }
     }
 
-    void RetracePath(Node startNode, Node endNode, List<Node> open, HashSet<Node> closed) {
+    void RetracePath(Node startNode, Node endNode) {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
 
@@ -79,8 +82,6 @@ public class AStar : MonoBehaviour
         path.Reverse();
 
         grid.path = path;
-        grid.open = open;
-        grid.closed = closed;
     }
 
     int GetDistance(Node nodeA, Node nodeB) {

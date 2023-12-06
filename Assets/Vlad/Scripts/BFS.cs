@@ -15,7 +15,7 @@ public class BFS : MonoBehaviour
     }
 
     void Update() {
-        if (seeker && target) {
+        if (grid.activeAlg == AlgorithmType.BFS && seeker && target) {
             FindPath(seeker.position, target.position);
         }
     }
@@ -31,7 +31,9 @@ public class BFS : MonoBehaviour
 
         while (open.Count > 0) {
             if (Time.realtimeSinceStartup > 5) {
-                RetracePath(startNode, targetNode, open.ToList(), closed);
+                grid.open = open.ToList();
+                grid.closed = closed.ToList();
+                RetracePath(startNode, targetNode);
                 return;
             }
 
@@ -40,7 +42,9 @@ public class BFS : MonoBehaviour
             closed.Add(currentNode);
 
             if (currentNode == targetNode) {
-                RetracePath(startNode, targetNode, open.ToList(), closed);
+                grid.open = open.ToList();
+                grid.closed = closed.ToList();
+                RetracePath(startNode, targetNode);
                 return;
             }
 
@@ -56,7 +60,7 @@ public class BFS : MonoBehaviour
         }
     }
 
-    void RetracePath(Node startNode, Node endNode, List<Node> open, HashSet<Node> closed) {
+    void RetracePath(Node startNode, Node endNode) {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
 
@@ -66,9 +70,5 @@ public class BFS : MonoBehaviour
         }
 
         path.Reverse();
-
-        grid.path = path;
-        grid.open = open;
-        grid.closed = closed;
     }
 }
