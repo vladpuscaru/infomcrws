@@ -1,4 +1,0 @@
-repository "INFOMCRWS_AStar@vladpuscaru@cloud"
-  path "/"
-    br "/main"
-    co "/main"
