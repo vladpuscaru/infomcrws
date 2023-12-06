@@ -11,7 +11,7 @@ public class Debugger : MonoBehaviour
     void OnDrawGizmos() {
         Gizmos.DrawWireCube(transform.position, new Vector3(grid.gridWorldSize.x, 1, grid.gridWorldSize.y));
 
-        if (grid != null) {
+        if (grid != null && grid.grid != null) {
             foreach (Node n in grid.grid) {
                 Gizmos.color = n.walkable ? Color.white : Color.red;
                     if (grid.open != null && grid.open.Contains(n)) {

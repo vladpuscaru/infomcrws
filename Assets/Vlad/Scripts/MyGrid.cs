@@ -23,6 +23,8 @@ public class MyGrid : MonoBehaviour
     void Start() {
         nodeDiameter = nodeRadius*2;
 
+        activeAlg = AlgorithmType.BFS;
+
         gridWorldSize = new Vector2(Mathf.Clamp(gridWorldSize.x, 0, gridWorldSize.x), Mathf.Clamp(gridWorldSize.y, 0, gridWorldSize.y));
         CreateGrid();
     }

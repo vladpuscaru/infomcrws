@@ -33,7 +33,6 @@ public class DFS : MonoBehaviour
             if (Time.realtimeSinceStartup > 5) {
                 grid.open = open.ToList();
                 grid.closed = closed.ToList();
-                RetracePath(startNode, targetNode);
                 return;
             }
 
@@ -64,7 +63,7 @@ public class DFS : MonoBehaviour
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
 
-        while (currentNode != startNode && currentNode != null) {
+        while (currentNode != startNode) {
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }

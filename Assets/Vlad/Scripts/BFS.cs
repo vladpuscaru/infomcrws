@@ -30,10 +30,9 @@ public class BFS : MonoBehaviour
         open.Enqueue(startNode);
 
         while (open.Count > 0) {
-            if (Time.realtimeSinceStartup > 5) {
+            if (Time.realtimeSinceStartup > 2) {
                 grid.open = open.ToList();
                 grid.closed = closed.ToList();
-                RetracePath(startNode, targetNode);
                 return;
             }
 
@@ -42,6 +41,7 @@ public class BFS : MonoBehaviour
             closed.Add(currentNode);
 
             if (currentNode == targetNode) {
+                Debug.Log(open.Count);
                 grid.open = open.ToList();
                 grid.closed = closed.ToList();
                 RetracePath(startNode, targetNode);

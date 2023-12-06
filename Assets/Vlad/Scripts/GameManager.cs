@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,23 +10,29 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public TextMeshProUGUI textTotalCells;
+    public TMP_Dropdown dropdownAlgSelect;
+
     public MyGrid grid;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-
+        dropdownAlgSelect.onValueChanged.AddListener(delegate {
+            OnAlgSelectionChange(dropdownAlgSelect);
+        });
     }
 
-    public void OnAlgSelectionChange(Dropdown dropdown) {
-        switch(dropdown.value.ToString()) {
-            case "Breadth-First-Search":
+    public void OnAlgSelectionChange(TMP_Dropdown dropdown) {
+        switch(dropdown.value) {
+            case 0:
                 grid.activeAlg = AlgorithmType.BFS;
             break;
-            case "Depth-First-Search":
+            case 1:
                 grid.activeAlg = AlgorithmType.DFS;
             break;
-            case "A* Search":
+            case 2:
                 grid.activeAlg = AlgorithmType.ASTAR;
             break;
         }
