@@ -2,12 +2,19 @@ using UnityEngine;
 using System.Collections;
 
 public class Agent : MonoBehaviour {
-    public Transform target;
-    float speed = 20.0f;
+    public float speed = 20.0f;
     Vector3[] path;
     int targetIndex;
 
+    public bool isOccupied = false;
+    public int targetCount = 0;
+
     void Start() {
+    }
+
+    public void GoTowardsTarget(Transform target) {
+        isOccupied = true;
+        targetCount++;
         PathfinderRequestManager.RequestPath(transform.position, target.position, OnPathFound);
     }
 
@@ -26,6 +33,7 @@ public class Agent : MonoBehaviour {
             if (transform.position == currentWaypoint) {
                 targetIndex++;
                 if (targetIndex >= path.Length) {
+                    isOccupied = false;
                     yield break;
                 }
                 currentWaypoint = path[targetIndex];
