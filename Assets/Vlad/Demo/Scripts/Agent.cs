@@ -15,6 +15,7 @@ public class Agent : MonoBehaviour {
     public void GoTowardsTarget(Transform target) {
         isOccupied = true;
         targetCount++;
+        targetIndex = 0;
         PathfinderRequestManager.RequestPath(transform.position, target.position, OnPathFound);
     }
 

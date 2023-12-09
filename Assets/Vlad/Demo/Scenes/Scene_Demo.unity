@@ -6328,7 +6328,7 @@ MonoBehaviour:
   m_displayGizmos: 0
   m_agentPrefab: {fileID: 945963090913208392, guid: 30184cc4746294d68879be49a58e11b3, type: 3}
   m_agentSpawnPoint: {fileID: 2114671446}
-  m_agentsToBeSpawned: 69
+  m_agentsToBeSpawned: 1
   m_agents: []
   m_targets:
   - {fileID: 885446007}
