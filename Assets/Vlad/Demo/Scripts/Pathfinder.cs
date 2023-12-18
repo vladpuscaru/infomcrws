@@ -1,93 +1,51 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using System.Diagnostics;
 
 public class Pathfinder : MonoBehaviour
 {   
+    public enum AlgorithmType {
+        AStar_NO_OPT,
+        AStart_OPT_1,
+        AStar_OPT_2
+    }
+
+    public double AveragePathTime {
+        get { return activeAlgorithm.GetAverageAllTime(); }
+    }
+
+    public Algorithm activeAlgorithm;
+
     MapGrid grid;
     PathfinderRequestManager requestManager;
 
     void Awake() {
+        activeAlgorithm = new AStarNoOpt();
         grid = GetComponent<MapGrid>();
         requestManager = GetComponent<PathfinderRequestManager>();
     }
+    
+    public Vector3[] FindPathSync(Vector3 startPos, Vector3 targetPos) {
+        List<MapNode> path = activeAlgorithm.FindPath(grid, startPos, targetPos);
+        if (path.Count > 0) {
+            return SimplifyPath(path);
+        } else {
+            return new List<Vector3>().ToArray();
+        }
+    }
 
     public void StartFindPath(Vector3 startPos, Vector3 targetPos) {
-        StartCoroutine(FindPath(startPos, targetPos));
+        StartCoroutine(FindPath(startPos, targetPos, activeAlgorithm));
     }
 
-    IEnumerator FindPath(Vector3 startPos, Vector3 targetPos) {
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
-
-        Vector3[] waypoints = new Vector3[0];
-        bool pathFound = false;
-
-        MapNode startNode = grid.GetNodeFromWorldPoint(startPos);
-        MapNode targetNode = grid.GetNodeFromWorldPoint(targetPos);
-
-        if (startNode.walkable && targetNode.walkable) {
-            Heap<MapNode> open = new Heap<MapNode>(grid.MaxSize);
-
-            HashSet<MapNode> closed = new HashSet<MapNode>();
-            open.Add(startNode);
-
-            while (open.Count > 0) {
-                MapNode currentNode = open.RemoveFirst();
-
-                closed.Add(currentNode);
-
-                if (currentNode == targetNode) {
-                    sw.Stop();
-                    print("Path found: " + sw.ElapsedMilliseconds + "ms");
-                    pathFound = true;
-                    break;
-                }
-
-                List<MapNode> neighbours = grid.GetNodeNeighbours(currentNode);
-                foreach (MapNode neighbour in neighbours) {
-                    if (!neighbour.walkable || closed.Contains(neighbour)) {
-                        continue;
-                    }
-
-                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
-                    if (newMovementCostToNeighbour < neighbour.gCost || !open.Contains(neighbour)) {
-                        neighbour.gCost = newMovementCostToNeighbour;
-                        neighbour.hCost = GetDistance(neighbour, targetNode);
-                        neighbour.parent = currentNode;
-
-                        if (!open.Contains(neighbour)) {
-                            open.Add(neighbour);
-                        } else {
-                            open.UpdateItem(neighbour);
-                        }
-                    }
-                }
-            }
-        }
+    IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Algorithm algorithm) {
+        List<MapNode> path = algorithm.FindPath(grid, startPos, targetPos);
         yield return null;
 
-        if (pathFound) {
-            waypoints = RetracePath(startNode, targetNode);
-        }
-        requestManager.FinishedProcessingPath(waypoints, pathFound);
-    }
-
-    Vector3[] RetracePath(MapNode startNode, MapNode endNode) {
-        List<MapNode> path = new List<MapNode>();
-        MapNode currentNode = endNode;
-
-        while (currentNode != startNode) {
-            path.Add(currentNode);
-            currentNode = currentNode.parent;
-        }
-        path.Reverse();
+        bool pathFound = path.Count > 0;
         Vector3[] waypoints = SimplifyPath(path);
-
-        return waypoints;
+        requestManager.FinishedProcessingPath(waypoints, pathFound);
     }
 
     Vector3[] SimplifyPath(List<MapNode> path) {
@@ -105,15 +63,5 @@ public class Pathfinder : MonoBehaviour
         }
         waypoints.Add(path[path.Count - 1].worldPosition);
         return waypoints.ToArray();
-    }
-
-    int GetDistance(MapNode nodeA, MapNode nodeB) {
-        int distX = Mathf.Abs(nodeA.gridPosition.x - nodeB.gridPosition.x);
-        int distY = Mathf.Abs(nodeA.gridPosition.y - nodeB.gridPosition.y);
-
-        if (distX > distY) {
-            return 14 * distY + 10 * (distX - distY);            
-        }
-        return 14 * distX + 10 * (distY - distX);            
     }
 }

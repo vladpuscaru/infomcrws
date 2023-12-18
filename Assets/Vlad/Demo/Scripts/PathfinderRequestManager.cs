@@ -18,6 +18,10 @@ public class PathfinderRequestManager : MonoBehaviour {
         pathfinder = GetComponent<Pathfinder>();
     }
 
+    public static Vector3[] RequestPathSync(Vector3 pathStart, Vector3 pathEnd) {
+        return instance.pathfinder.FindPathSync(pathStart, pathEnd);
+    }
+
     public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback) {
         PathfinderRequest newRequest = new PathfinderRequest(pathStart, pathEnd, callback);
         instance.pathRequests.Enqueue(newRequest);
