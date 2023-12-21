@@ -89,6 +89,9 @@ public class AStarNoOpt : Algorithm
 
     public double GetAverageAllTime()
     {
-        return pathTimes.Average();
+        if (pathTimes.Count > 0) {
+            return pathTimes.Average();
+        }
+        return 0.0f;
     }
 }

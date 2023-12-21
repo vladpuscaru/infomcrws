@@ -25,7 +25,7 @@ namespace InfomCRWS {
         public bool m_displayGizmos;
 
         public GameObject m_agentPrefab;
-        public Transform m_agentSpawnPoint;
+        public List<Transform> m_agentSpawnPoints;
         public int m_agentsToBeSpawned;
         public List<Agent> m_agents;
         public List<Transform> m_targets;
@@ -34,7 +34,7 @@ namespace InfomCRWS {
 
         void Start() {
             for (int i = 0; i < m_agentsToBeSpawned; i++) {
-                spawnAgent(m_agentSpawnPoint);
+                spawnAgent(PickRandomSpawnPoint());
             }
         }
 
@@ -42,13 +42,25 @@ namespace InfomCRWS {
             foreach (Agent a in m_agents) {
                 if (a != null && !a.isOccupied) {
                     a.targetCount = a.targetCount >= m_targets.Count ? 0 : a.targetCount;
-                    Transform nextTarget = m_targets[a.targetCount];
-                    // a.GoTowardsTarget(nextTarget);
-                    a.GoTowardsTargetSync(nextTarget);
+                    Transform nextTarget = PickRandomTargetPoint();
+                    a.GoTowardsTarget(nextTarget);
+                    //a.GoTowardsTargetSync(nextTarget);
                 }
             }
 
             UpdateStats();
+        }
+
+        Transform PickRandomTargetPoint() {
+            System.Random rand = new System.Random();
+            int randIdx = rand.Next(0, m_targets.Count);
+            return m_targets[randIdx];
+        }
+
+        Vector3 PickRandomSpawnPoint() {
+            System.Random rand = new System.Random();
+            int randIdx = rand.Next(0, m_agentSpawnPoints.Count);
+            return m_agentSpawnPoints[randIdx].transform.position;
         }
 
         void UpdateStats() {
@@ -70,12 +82,12 @@ namespace InfomCRWS {
         }
 
 
-        void spawnAgent(Transform position) {
+        void spawnAgent(Vector3 position) {
             System.Random r = new System.Random();
             float minSpeed = 20.0f;
             float maxSpeed = 50.0f;
 
-            Agent newAgent = Instantiate(m_agentPrefab, position).GetComponent<Agent>();
+            Agent newAgent = Instantiate(m_agentPrefab, position, Quaternion.identity).GetComponent<Agent>();
             newAgent.targetCount = m_targetCount;
             newAgent.maxTargets = m_targets.Count;
             newAgent.speed = minSpeed + (float)r.NextDouble() * maxSpeed;
@@ -104,7 +116,7 @@ namespace InfomCRWS {
             } else if (targetValue > m_agents.Count) {
                 int target = targetValue - m_agents.Count;
                 for (int i = 0; i < target; i++) {
-                    spawnAgent(m_agentSpawnPoint);
+                    spawnAgent(PickRandomSpawnPoint());
                 }
             }
         }

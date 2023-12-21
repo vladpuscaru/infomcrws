@@ -44,7 +44,7 @@ public class Pathfinder : MonoBehaviour
         yield return null;
 
         bool pathFound = path.Count > 0;
-        Vector3[] waypoints = SimplifyPath(path);
+        Vector3[] waypoints = pathFound ? SimplifyPath(path) : new List<Vector3>().ToArray();
         requestManager.FinishedProcessingPath(waypoints, pathFound);
     }
 
