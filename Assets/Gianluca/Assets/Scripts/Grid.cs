@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GridGP : MonoBehaviour
 {
-    public bool onlyDisplayPathGizmos;
+    public bool displayGridGizmos;
     public Transform player;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
@@ -22,7 +22,7 @@ public class GridGP : MonoBehaviour
             return girdSizeX * girdSizeY;
         }
     }
-    void Start()
+    void Awake()
     {
         nodeDiameter = nodeRadius * 2;
         girdSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
@@ -86,37 +86,17 @@ public class GridGP : MonoBehaviour
     }
 
 
-    public List<NodeGP> path;
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
-
-        if (onlyDisplayPathGizmos)
+        if (grid != null && displayGridGizmos)
         {
-            if (path != null)
+            foreach (NodeGP n in grid)
             {
-                foreach (NodeGP n in path)
-                {
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
-                }
-            }
-        }
-
-        else
-        {
-
-            if (grid != null)
-            {
-                foreach (NodeGP n in grid)
-                {
-                    Gizmos.color = (n.walkable) ? Color.white : Color.red;
-                    if (path != null)
-                        if (path.Contains(n))
-                            Gizmos.color = Color.black;
-                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
-                }
+                Gizmos.color = (n.walkable) ? Color.white : Color.red;
+                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
             }
         }
     }
+
 }
