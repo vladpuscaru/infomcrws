@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class SeekerSpawner : MonoBehaviour
@@ -8,6 +9,8 @@ public class SeekerSpawner : MonoBehaviour
     public Transform target; // Assign the common target in the inspector
     public int numberOfSeekers; // Set the number of seekers you want to spawn
     public float spawnRate = 0.1f; // Time between spawns
+    PathfindingGP pathfinding;
+
 
     private void Start()
     {
@@ -18,14 +21,12 @@ public class SeekerSpawner : MonoBehaviour
     {
         for (int i = 0; i < numberOfSeekers; i++)
         {
+            Vector3 spawnPos = GetRandomSpawnPosition();
             // Instantiate a new seeker instance
-            GameObject newSeeker = Instantiate(seekerPrefab, GetRandomSpawnPosition(), Quaternion.identity);
+            GameObject newSeeker = Instantiate(seekerPrefab, spawnPos, Quaternion.identity);
 
             // Assign the target to the new seeker
             newSeeker.GetComponent<UnitGP>().target = target;
-
-            // Optionally, you can immediately start the pathfinding process
-            newSeeker.GetComponent<UnitGP>().StartCoroutine("FollowPath");
 
             // Wait for a bit before spawning the next seeker
             yield return new WaitForSeconds(spawnRate);
@@ -42,8 +43,8 @@ public class SeekerSpawner : MonoBehaviour
         do
         {
             // The plane extends from -5 to +5 on the X and Z axes
-            float xPosition = Random.Range(-5f, 5f);
-            float zPosition = Random.Range(-5f, 5f);
+            float xPosition = Random.Range(-50f, 50f);
+            float zPosition = Random.Range(-50f, 50f);
             potentialPosition = new Vector3(xPosition, 0, zPosition); // Y is 0 because it's a flat plane
 
             // Check if this position collides with any unwalkable objects

@@ -32,34 +32,42 @@ public class UnitGP : MonoBehaviour
             followPathCoroutine = StartCoroutine(FollowPath()); // Start the FollowPath coroutine and keep a reference
         }
     }
-
     IEnumerator FollowPath()
     {
-        if (path == null || path.Length == 0)
+        // Make sure there's a path to follow
+        if (path.Length > 0)
         {
-            Debug.LogError("Received an empty path");
-            yield break;
-        }
+            Vector3 currentWaypoint = path[0];
 
-        Vector3 currentWaypoint = path[0];
-
-        while (true)
-        {
-            if (transform.position == currentWaypoint)
+            while (true)
             {
-                targetIndex++;
-                if (targetIndex >= path.Length)
+                if (transform.position == currentWaypoint)
                 {
-                    yield break; // End the coroutine if the end of the path is reached
+                    targetIndex++;
+                    if (targetIndex >= path.Length)
+                    {
+                        // Arrived at the last waypoint, the target
+                        ReachedTarget();
+                        yield break;
+                    }
+                    currentWaypoint = path[targetIndex];
                 }
-                currentWaypoint = path[targetIndex];
-            }
 
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-            yield return null;
+                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                yield return null;
+            }
+        }
+        else
+        {
+            // No path to follow, so we consider we've reached the target
+            ReachedTarget();
         }
     }
 
+    void ReachedTarget()
+    {
+        Destroy(gameObject);
+    }
     public void OnDrawGizmos()
     {
         if (path != null)
