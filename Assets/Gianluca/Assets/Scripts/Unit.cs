@@ -16,7 +16,7 @@ public class UnitGP : MonoBehaviour
             Debug.LogError("Target not assigned on " + gameObject.name);
             return;
         }
-        PathRequestManagerGP.RequestPath(transform.position, target.position, OnPathFound);
+        PathRequestManagerGP.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
     }
 
     public void OnPathFound(Vector3[] newPath, bool pathSuccessful)

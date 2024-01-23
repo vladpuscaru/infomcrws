@@ -9,24 +9,14 @@ public class PathfindingGP : MonoBehaviour
 {
 
     GridGP grid;
-    PathRequestManagerGP requestManager;
-
 
     void Awake()
     {
         grid = GetComponent<GridGP>();
-        requestManager = GetComponent<PathRequestManagerGP>();
-
     }
 
 
-
-    public void StartFindPath(Vector3 startPos, Vector3 targetPos)
-    {
-        StartCoroutine(FindPath(startPos, targetPos));
-    }
-
-    IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
+    public void FindPath(PathRequest request, Action<PathResult> callback)
     {
 
         Stopwatch sw = new Stopwatch();
@@ -37,8 +27,8 @@ public class PathfindingGP : MonoBehaviour
 
 
 
-        NodeGP startNode = grid.NodeFromWorldPoint(startPos);
-        NodeGP targetNode = grid.NodeFromWorldPoint(targetPos);
+        NodeGP startNode = grid.NodeFromWorldPoint(request.pathStart);
+        NodeGP targetNode = grid.NodeFromWorldPoint(request.pathEnd);
 
         if (startNode.walkable && targetNode.walkable)
         {
@@ -81,12 +71,12 @@ public class PathfindingGP : MonoBehaviour
                 }
             }
         }
-        yield return null;
         if (pathSuccess)
         {
             waypoints = RetracePath(startNode, targetNode);
+            pathSuccess = waypoints.Length > 0;
         }
-        requestManager.FinishedProcessingPath(waypoints, pathSuccess);
+        callback(new PathResult(waypoints, pathSuccess, request.callback));
     }
 
     Vector3[] RetracePath(NodeGP startNode, NodeGP endNode)
