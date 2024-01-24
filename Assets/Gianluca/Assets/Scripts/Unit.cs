@@ -4,7 +4,7 @@ using System.Collections;
 public class UnitGP : MonoBehaviour
 {
     public Transform target;
-    float speed = 20;
+    float speed = 200;
     Vector3[] path;
     int targetIndex;
     Coroutine followPathCoroutine; // Reference to the FollowPath coroutine
