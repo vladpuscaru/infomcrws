@@ -4,11 +4,13 @@ using System.Collections.Specialized;
 using UnityEngine;
 using System.Diagnostics;
 using System;
-
+using TMPro; 
 public class PathfindingGP : MonoBehaviour
 {
 
     GridGP grid;
+    public TextMeshProUGUI pathfindingTimeText; // Assign this in the inspector
+
 
     void Awake()
     {
@@ -48,6 +50,7 @@ public class PathfindingGP : MonoBehaviour
 
                     sw.Stop();
                     print("Path found: " + sw.ElapsedMilliseconds + " ms");
+                    DisplayPathfindingTime(sw.ElapsedMilliseconds);
                     break;
                 }
 
@@ -77,6 +80,14 @@ public class PathfindingGP : MonoBehaviour
             pathSuccess = waypoints.Length > 0;
         }
         callback(new PathResult(waypoints, pathSuccess, request.callback));
+    }
+
+    private void DisplayPathfindingTime(long milliseconds)
+    {
+        if (pathfindingTimeText != null)
+        {
+            pathfindingTimeText.text = "Path found: " + milliseconds + " ms";
+        }
     }
 
     Vector3[] RetracePath(NodeGP startNode, NodeGP endNode)
